@@ -1,15 +1,15 @@
 package com.redis.entity;
 
 public class TbUser {
-	
+
 	public static String TABLE = "TB_USER";
-	
-	public static int USER_ID;
-	public static String USER_NAME;
-	public static String USER_PWD;
-	public static String USER_PHONE;
-	public static int USER_AGE;
-	
+
+	public int USER_ID;
+	public String USER_NAME;
+	public String USER_PWD;
+	public String USER_PHONE;
+	public int USER_AGE;
+
 	public int getUserId() {
 		return USER_ID;
 	}
