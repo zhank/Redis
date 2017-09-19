@@ -1,1 +1,11 @@
-/target/
+.settings
+.classpath
+.project
+target
+koal.log.*
+*.log
+*.log.*
+/target
+/bin/
+/lib/
+.DS_Store

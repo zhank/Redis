@@ -32,8 +32,8 @@ public final class RedisPool {
 			config.setMaxTotal(cfg.MAX_TOTAL);
 			config.setMaxIdle(cfg.MAX_IDLE);
 			config.setMaxWaitMillis(cfg.MAX_WAIT_MILLIS);
-			config.setTestOnBorrow(cfg.TEST_ON_BORROW);
-			jedisPool = new JedisPool(config, cfg.IP, cfg.PORT, cfg.TIMEOUT);
+			config.setTestOnBorrow(true);
+			jedisPool = new JedisPool(config, cfg.IP, cfg.PORT, cfg.TIMEOUT, cfg.AUTH);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

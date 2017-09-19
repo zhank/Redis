@@ -1,40 +1,52 @@
 package com.redis.entity;
 
 public class TbUser {
-	private String userName;
-	private String userAge;
-	private String userPhone;
-	private String userPwd;
+	
+	public static String TABLE = "TB_USER";
+	
+	public static int USER_ID;
+	public static String USER_NAME;
+	public static String USER_PWD;
+	public static String USER_PHONE;
+	public static int USER_AGE;
+	
+	public int getUserId() {
+		return USER_ID;
+	}
+
+	public void setUserId(int userId) {
+		this.USER_ID = userId;
+	}
 
 	public String getUserName() {
-		return userName;
+		return USER_NAME;
 	}
 
 	public void setUserName(String userName) {
-		this.userName = userName;
+		this.USER_NAME = userName;
 	}
 
-	public String getUserAge() {
-		return userAge;
+	public int getUserAge() {
+		return USER_AGE;
 	}
 
-	public void setUserAge(String userAge) {
-		this.userAge = userAge;
+	public void setUserAge(int userAge) {
+		this.USER_AGE = userAge;
 	}
 
 	public String getUserPhone() {
-		return userPhone;
+		return USER_PHONE;
 	}
 
 	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
+		this.USER_PHONE = userPhone;
 	}
 
 	public String getUserPwd() {
-		return userPwd;
+		return USER_PWD;
 	}
 
 	public void setUserPwd(String userPwd) {
-		this.userPwd = userPwd;
+		this.USER_PWD = userPwd;
 	}
 }

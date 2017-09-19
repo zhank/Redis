@@ -2,9 +2,6 @@ package com.redis.factory;
 
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import redis.clients.jedis.Jedis;
 
 /**
@@ -13,19 +10,19 @@ import redis.clients.jedis.Jedis;
  * @author zhangkk
  * @date 2017年9月14日
  */
-public class AuthorCacheDataFactory {
+public class CacheDataFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthorCacheDataFactory.class);
+	//private static final Logger logger = LoggerFactory.getLogger(CacheDataFactory.class);
 
-	private AuthorCacheDataFactory() {
+	private CacheDataFactory() {
 		
 	}
 
 	private static class SingletonHolder {
-		private static final AuthorCacheDataFactory INSTANCE = new AuthorCacheDataFactory();
+		private static final CacheDataFactory INSTANCE = new CacheDataFactory();
 	}
 
-	public static final AuthorCacheDataFactory getInstance() {
+	public static final CacheDataFactory getInstance() {
 		return SingletonHolder.INSTANCE;
 	}
 
@@ -39,29 +36,36 @@ public class AuthorCacheDataFactory {
 
 	/**
 	 * 更新应用统计数据
-	 * 
-	 * @param appId
-	 * @param userType
 	 */
 	public void updateCacheData(String key, Object value) {
+		updateCacheData(key, -1, value);
+	}
+	public void updateCacheData(String key, Integer seconds, Object value) {
 		Jedis jedis = RedisPool.getJedis();
-		updateCacheData(jedis, key, value);
+		updateCacheData(jedis, key, seconds, value);
 		RedisPool.closeConn(jedis);
 	}
 
 	/**
 	 * 更新缓存中统计信息
-	 * 
 	 * @param jedis
-	 * @param key
-	 * @param value
+	 * @param key     key
+	 * @param seconds  过期时间
+	 * @param value   值
 	 */
-	public void updateCacheData(Jedis jedis, String key, Object value) {
+	public void updateCacheData(Jedis jedis, String key, Integer seconds, Object value) {
 		long t1 = System.currentTimeMillis();
 		if (value == null) {
 			value = "0";
 		}
-		jedis.set(key, value.toString());
+		/**
+		 * 当用户设置的过期的时间设置为 0、-1时，遇添加过期时间 
+		 */
+		if(seconds != null && (seconds.intValue() != 0 || seconds.intValue() != -1)) {
+			jedis.setex(key, seconds, value.toString());
+		} else {
+			jedis.set(key, value.toString());
+		}
 		long t2 = System.currentTimeMillis();
 		System.out.println("更新统计节点=" + (t2 - t1));
 	}
