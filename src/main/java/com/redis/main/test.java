@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.cas.client.validation.Cas10TicketValidationFilter;
-
 import com.alibaba.fastjson.JSON;
 import com.redis.entity.TbUser;
 import com.redis.factory.CacheDataFactory;
@@ -32,15 +30,17 @@ public class test {
 			// insetTestDataToDB(conn);
 
 			// 从数据库取数据添加去redis
-			 //insertDataToRedis(conn, result);
-
-			boolean isSearchDB = true; // 是否查询数据库
+			// insertDataToRedis(conn, result);
+			
+			// 是否查询数据库
+			boolean isSearchDB = true; 
+			Long t1 = System.currentTimeMillis();
 			if (isSearchDB) {
 				// 查询数据库
-				searchUserFromDB(conn, ps, result);
+				searchUserFromDB(conn, ps, result, t1);
 			} else {
 				// 查询redis
-				searchUserFromRedis(authorCache);
+				searchUserFromRedis(authorCache, t1);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,28 +59,25 @@ public class test {
 	 * @param t1
 	 * @throws Exception
 	 */
-	public static void searchUserFromDB(Connection conn, PreparedStatement ps, ResultSet result)
-			throws Exception {
-		// 查询数据库userPhone 10086_20000的用户;
-		String sql = "SELECT * FROM TB_USER";
+	public static void searchUserFromDB(Connection conn, PreparedStatement ps, ResultSet result, Long t1) throws Exception {
+		String sql = "SELECT * FROM TB_USER WHERE USER_ID = ?";
 		ps = conn.prepareStatement(sql);
-	//ps.setString(1, "20011");
-		Long t1 = System.currentTimeMillis();
-		
+		ps.setString(1, "20011");
 		result = ps.executeQuery();
-		
+
 		Long t2 = System.currentTimeMillis();
 		System.out.println("查询数据库耗时:" + (t2 - t1));
 		int count = 0;
 		while (result.next()) {
 			count++;
-			/*TbUser user = new TbUser();
-			user.setUserId(result.getInt("USER_ID"));
-			user.setUserName(result.getString("USER_NAME"));
-			user.setUserPwd(result.getString("USER_PWD"));
-			user.setUserPhone(result.getString("USER_PHONE"));
-			user.setUserAge(result.getInt("USER_AGE"));*/
-			//printInfo(user);
+			 TbUser user = new TbUser();
+			 user.setUserId(result.getInt("USER_ID"));
+			 user.setUserName(result.getString("USER_NAME"));
+			 user.setUserPwd(result.getString("USER_PWD"));
+			 user.setUserPhone(result.getString("USER_PHONE"));
+			 user.setUserAge(result.getInt("USER_AGE"));
+			 
+			 printInfo(user);
 		}
 		System.out.println("查询条数：" + count);
 	}
@@ -91,19 +88,12 @@ public class test {
 	 * @param t1
 	 * @throws SQLException
 	 */
-	@SuppressWarnings("unchecked")
-	public static void searchUserFromRedis(CacheDataFactory authorCache) throws SQLException {
-		Long t1 = System.currentTimeMillis();
-		
+	public static void searchUserFromRedis(CacheDataFactory authorCache, Long t1) throws SQLException {
 		Set<String> cacheData = authorCache.getAllData();
-		
-		Long t2 = System.currentTimeMillis();
-		System.out.println("查询redis耗时:" + (t2 - t1));
-		System.out.println("查询条数：" + cacheData.size());
-		
-		/*if (cacheData != null) {
-
-			// redis里存储的是字符串，用json解析   alibaba的json
+		if (cacheData != null) {
+			
+			// redis里存储的是字符串，用json解析 alibaba的json
+			@SuppressWarnings("unchecked")
 			Map<String, Object> userMap = (Map<String, Object>) JSON.parse(cacheData.toString());
 			TbUser user = new TbUser();
 			if (userMap.get("USER_ID") != null) {
@@ -116,7 +106,9 @@ public class test {
 				user.setUserAge(Integer.parseInt(userMap.get("USER_AGE").toString()));
 			}
 			printInfo(user);
-		}*/
+		}
+		Long t2 = System.currentTimeMillis();
+		System.out.println("查询redis耗时:" + (t2 - t1));
 	}
 
 	/**
